@@ -223,7 +223,7 @@ onMounted(() => {
     </section>
 
     <footer class="foot">
-      <div>&copy; {{ year }} {{ business.name }}. {{ t.footer }}</div>
+      <div>&copy; {{ year }} VetCareplus Malawi. {{ t.footer }}</div>
       <div class="socrow small">
         <a v-for="s in socials" :key="s.k" :href="s.url" target="_blank" rel="noopener">{{ s.label }}</a>
         <span>{{ business.tagline }}</span>
