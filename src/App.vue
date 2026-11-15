@@ -2,6 +2,16 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { branches, business, clients, products, sections, showClients, social, socialLabels, text, vacancies } from './content'
 
+const brandName = 'VetCareplus Malawi'
+business.name = brandName
+const rebrand = value => {
+  if (typeof value === 'string') return value.replaceAll('VetCare Plus', brandName)
+  if (Array.isArray(value)) return value.forEach((item, index) => { value[index] = rebrand(item) })
+  if (value && typeof value === 'object') Object.keys(value).forEach(key => { value[key] = rebrand(value[key]) })
+  return value
+}
+rebrand(text)
+
 let saved = 'en'
 try { saved = localStorage.getItem('lang') === 'ny' ? 'ny' : 'en' } catch (e) { saved = 'en' }
 const lang = ref(saved)
@@ -15,8 +25,8 @@ const scrolled = ref(false)
 const year = new Date().getFullYear()
 const navIds = computed(() => sections.filter(s => s !== 'clients' || showClients))
 const waLink = msg => 'https://wa.me/' + business.whatsapp + '?text=' + encodeURIComponent(msg)
-const wa = waLink('Hello VetCare Plus')
-const mailApply = 'mailto:' + business.email + '?subject=' + encodeURIComponent('Job application - VetCare Plus')
+const wa = waLink('Hello ' + brandName)
+const mailApply = 'mailto:' + business.email + '?subject=' + encodeURIComponent('Job application - ' + brandName)
 const hide = e => { e.target.style.display = 'none' }
 const go = id => { menu.value = false; const el = document.getElementById(id); if (el) el.scrollIntoView({ behavior: 'smooth' }) }
 
@@ -39,7 +49,7 @@ const socials = computed(() => Object.keys(social).filter(k => social[k]).map(k 
 const chatOpen = ref(false)
 const chatText = ref('')
 function sendChat() {
-  const m = chatText.value.trim() || 'Hello VetCare Plus'
+  const m = chatText.value.trim() || 'Hello ' + brandName
   window.open(waLink(m), '_blank', 'noopener')
   chatText.value = ''
   chatOpen.value = false
@@ -189,7 +199,7 @@ onMounted(() => {
         <p v-else class="note reveal">{{ t.careers.none }}</p>
         <div class="cta" style="margin-top:20px;">
           <a class="btn fill-btn" :href="mailApply">{{ t.careers.apply }}</a>
-          <a class="btn outline-btn" :href="waLink('Hello, I would like to work with VetCare Plus')" target="_blank" rel="noopener">{{ t.careers.applyWa }}</a>
+          <a class="btn outline-btn" :href="waLink('Hello, I would like to work with ' + brandName)" target="_blank" rel="noopener">{{ t.careers.applyWa }}</a>
         </div>
       </div>
     </section>
@@ -223,7 +233,7 @@ onMounted(() => {
     </section>
 
     <footer class="foot">
-      <div>&copy; {{ year }} VetCareplus Malawi. {{ t.footer }}</div>
+      <div>&copy; {{ year }} {{ business.name }}. {{ t.footer }}</div>
       <div class="socrow small">
         <a v-for="s in socials" :key="s.k" :href="s.url" target="_blank" rel="noopener">{{ s.label }}</a>
         <span>{{ business.tagline }}</span>
