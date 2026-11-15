@@ -6,11 +6,13 @@ const brandName = 'VetCareplus Malawi'
 business.name = brandName
 const rebrand = value => {
   if (typeof value === 'string') return value.replaceAll('VetCare Plus', brandName)
-  if (Array.isArray(value)) return value.forEach((item, index) => { value[index] = rebrand(item) })
-  if (value && typeof value === 'object') Object.keys(value).forEach(key => { value[key] = rebrand(value[key]) })
+  if (Array.isArray(value)) return value.map(rebrand)
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(Object.entries(value).map(([key, child]) => [key, rebrand(child)]))
+  }
   return value
 }
-rebrand(text)
+const brandedText = rebrand(text)
 
 let saved = 'en'
 try { saved = localStorage.getItem('lang') === 'ny' ? 'ny' : 'en' } catch (e) { saved = 'en' }
@@ -19,7 +21,7 @@ watch(lang, v => {
   try { localStorage.setItem('lang', v) } catch (e) { /* ignore */ }
   document.documentElement.lang = v
 }, { immediate: true })
-const t = computed(() => text[lang.value])
+const t = computed(() => brandedText[lang.value])
 const menu = ref(false)
 const scrolled = ref(false)
 const year = new Date().getFullYear()
